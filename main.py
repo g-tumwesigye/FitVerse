@@ -3,7 +3,8 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import io
 import base64
-from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, confusion_matrix
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, confusion_matrix, roc_auc_score
+import numpy as np
 
 # Enable eager execution globally
 tf.compat.v1.enable_eager_execution()
@@ -12,9 +13,8 @@ from fastapi import FastAPI, UploadFile, File, HTTPException
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 import pandas as pd
-import numpy as np
 from tensorflow.keras.models import load_model
-from tensorflow.keras.utils import to_categorical  
+from tensorflow.keras.utils import to_categorical
 import joblib
 from pydantic import BaseModel, root_validator, ValidationError
 import os
@@ -28,14 +28,16 @@ print("Current working directory:", os.getcwd())
 
 app = FastAPI(title="FitVerse BMI Classifier")
 
+# Add CORS middleware to allow cross-origin requests
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=["*"],  # Allows all origins (you can restrict this to specific origins if needed)
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=["*"],  # Allows all HTTP methods (GET, POST, etc.)
+    allow_headers=["*"],  # Allows all headers
 )
 
+# Load the pre-trained model, scaler, and label encoders
 scaler = joblib.load("models/scaler.pkl")
 label_encoders = joblib.load("models/label_encoders.pkl")
 model = load_model("models/sgd_momentum_model.h5")
@@ -87,14 +89,16 @@ async def predict_bmi(data: BMIPredictionInput):
 @app.post("/retrain")
 async def retrain_model(file: UploadFile = File(...)):
     try:
-        tf.compat.v1.enable_eager_execution()
+        # Load the new dataset
         new_data = pd.read_csv(file.file)
 
+        # Validate required columns
         required_columns = ["Weight", "Height", "BMI", "Age", "BMIcase", "Gender"]
         missing_columns = [col for col in required_columns if col not in new_data.columns]
         if missing_columns:
             raise ValueError(f"Missing required columns: {', '.join(missing_columns)}")
 
+        # Preprocess the data
         new_data.drop(columns=["Body Fat Percentage", "BFPcase", "Exercise Recommendation Plan"], inplace=True, errors='ignore')
         new_data["BMI_to_Weight"] = new_data["BMI"] / new_data["Weight"]
         numerical_features = ["Weight", "Height", "BMI", "Age", "BMI_to_Weight"]
@@ -104,9 +108,11 @@ async def retrain_model(file: UploadFile = File(...)):
         y_new = label_encoders["BMIcase"].transform(new_data["BMIcase"])
         y_new_cat = to_categorical(y_new)
 
+        # Retrain the model
         model.compile(optimizer='sgd', loss='categorical_crossentropy', metrics=['accuracy'])
         history = model.fit(X_new, y_new_cat, epochs=10, batch_size=32, verbose=0, validation_split=0.2)
 
+        # Save the retrained model
         model.save("models/sgd_momentum_model.h5")
         logger.info("Model retrained and saved successfully.")
 
@@ -115,11 +121,13 @@ async def retrain_model(file: UploadFile = File(...)):
         y_pred_classes = np.argmax(y_pred_probs, axis=1)
         y_true = y_new
 
+        # Compute metrics
         test_loss = model.evaluate(X_new, y_new_cat, verbose=0)[0]
         accuracy = accuracy_score(y_true, y_pred_classes)
         precision = precision_score(y_true, y_pred_classes, average='weighted')
         recall = recall_score(y_true, y_pred_classes, average='weighted')
         f1 = f1_score(y_true, y_pred_classes, average='weighted')
+        roc_auc = roc_auc_score(y_new_cat, y_pred_probs, multi_class='ovr', average='weighted')
 
         # Generate confusion matrix plot
         cm = confusion_matrix(y_true, y_pred_classes)
@@ -148,6 +156,7 @@ async def retrain_model(file: UploadFile = File(...)):
         loss_base64 = base64.b64encode(buf.read()).decode('utf-8')
         plt.close()
 
+        # Return the response with metrics and visualizations
         return {
             "message": "Model retrained successfully",
             "metrics": {
@@ -155,7 +164,8 @@ async def retrain_model(file: UploadFile = File(...)):
                 "accuracy": accuracy,
                 "precision": precision,
                 "recall": recall,
-                "f1_score": f1
+                "f1_score": f1,
+                "roc_auc": roc_auc
             },
             "confusion_matrix": cm_base64,
             "loss_plot": loss_base64
