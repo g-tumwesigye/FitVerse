@@ -5,6 +5,7 @@ tf.compat.v1.enable_eager_execution()
 
 from fastapi import FastAPI, UploadFile, File, HTTPException
 from fastapi.responses import JSONResponse
+from fastapi.middleware.cors import CORSMiddleware  # Import CORSMiddleware
 import pandas as pd
 import numpy as np
 from tensorflow.keras.models import load_model
@@ -22,6 +23,15 @@ logger = logging.getLogger(__name__)
 print("Current working directory:", os.getcwd())
 
 app = FastAPI(title="FitVerse BMI Classifier")
+
+# Add CORS middleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Allows all origins (use specific origins in production for security)
+    allow_credentials=True,
+    allow_methods=["*"],  # Allows all methods (GET, POST, etc.)
+    allow_headers=["*"],  # Allows all headers
+)
 
 # Loading the scaler, label encoders and model
 scaler = joblib.load("models/scaler.pkl")
@@ -90,7 +100,6 @@ async def predict_bmi(data: BMIPredictionInput):
         logger.error(f"Prediction error: {e}")
         raise HTTPException(status_code=500, detail="Internal server error while processing the prediction")
 
-
 @app.post("/retrain")
 async def retrain_model(file: UploadFile = File(...)):
     try:
@@ -135,15 +144,4 @@ async def retrain_model(file: UploadFile = File(...)):
         model.fit(X_new, y_new, epochs=10, batch_size=32, verbose=0)
 
         # Save the retrained model
-        model.save("models/sgd_momentum_model.h5")
-        
-        logger.info("Model retrained and saved successfully.")
-        return {"message": "Model retrained successfully"}
-
-    except ValueError as e:
-        logger.error(f"Validation error during retraining: {e}")
-        raise HTTPException(status_code=422, detail=f"Validation error: {e}")
-    except Exception as e:
-        logger.error(f"Error retraining model: {e}")
-        raise HTTPException(status_code=500, detail="Internal server error while retraining the model")
-
+        model.save("models/sgd_momentum_model
