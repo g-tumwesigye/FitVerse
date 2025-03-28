@@ -5,10 +5,11 @@ FitVerse is a health monitoring web application that uses machine learning to pr
 
 The project consists of a **FastAPI backend** (hosted on Render) for handling predictions and model retraining, and a **React frontend** (deployed on Vercel) for a user-friendly interface. The backend leverages TensorFlow for machine learning, scikit-learn for metrics, and Matplotlib/Seaborn for visualizations. The frontend and backend are maintained in separate repositories.
 
-## Live Demo and Links
+## Links
 - **FitVerse UI**: [https://fitverse-ui.vercel.app/](https://fitverse-ui.vercel.app/)
-- **Video Demo**: [A video Demo - YouTube Link] 
-- **GitHub Repository**: [FitVerse GitHub Repo](https://github.com/g-tumwesigye/FitVerse)
+- **Video Demo**: [A video Demo - YouTube Link] *(Insert your YouTube video demo link here)*
+- **Backend GitHub Repository**: [FitVerse GitHub Repo](https://github.com/g-tumwesigye/FitVerse)
+- **Frontend GitHub Repository**: [FitVerse_UI GitHub Repo](https://github.com/g-tumwesigye/Fitverse_UI)
 
 ## Dataset
 The dataset used was sourced from Kaggle:
@@ -21,7 +22,7 @@ The dataset used was sourced from Kaggle:
 - **Cross-Origin Support**: The backend includes CORS middleware for seamless frontend-backend communication.
 
 ## Tech Stack
-- **Frontend**: React, JavaScript, CSS (in a separate repository)
+- **Frontend**: React, JavaScript, CSS
 - **Backend**: FastAPI, Python, TensorFlow, scikit-learn, Matplotlib, Seaborn
 - **Deployment**:
   - Frontend: Vercel
@@ -62,7 +63,7 @@ FitVerse/
 
 ### Prerequisites
 - **Python 3.8+** (for backend)
-- **Node.js 14+** (for frontend, if setting up the frontend locally)
+- **Node.js 14+** (for frontend)
 - **Git**
 
 ### Step 1: Clone the Backend Repository
@@ -93,8 +94,8 @@ cd FitVerse
 ### Step 3: Set Up the Frontend
 1. **Clone the Frontend Repository**:
    ```bash
-   git clone <your-frontend-repo-url>
-   cd <frontend-repo-name>
+   git clone https://github.com/g-tumwesigye/Fitverse_UI.git
+   cd Fitverse_UI
    ```
 
 2. **Install Dependencies**:
@@ -120,36 +121,19 @@ cd FitVerse
 ## Deployment
 
 ### Backend Deployment (Render)
-1. **Push Changes to Git**:
-   - Commit and push your backend code to your Git repository.
-   ```bash
-   git add .
-   git commit -m "Updated backend with CORS and metrics"
-   git push origin main
-   ```
-
-2. **Deploy on Render**:
+1. **Deploy on Render**:
    - Log in to Render (https://dashboard.render.com/).
    - Select your backend service (`fitverse-q8be`).
    - Ensure the build command is `pip install -r requirements.txt` and the start command is `uvicorn main:app --host 0.0.0.0 --port $PORT`.
-   - Trigger a redeployment if needed.
+   - Deploy the service.
    - Backend URL: `https://fitverse-q8be.onrender.com/`
 
 ### Frontend Deployment (Vercel)
 The frontend is in a separate repository. If you have access:
-1. **Push Changes to Git**:
-   - Commit and push your frontend code to its Git repository.
-   ```bash
-   cd <frontend-repo-directory>
-   git add .
-   git commit -m "Updated Hero.jsx and hero.css"
-   git push origin main
-   ```
-
-2. **Deploy on Vercel**:
+1. **Deploy on Vercel**:
    - Log in to Vercel (https://vercel.com/).
    - Select your frontend project.
-   - Vercel will automatically redeploy on detecting the new commit.
+   - Deploy the project.
    - Frontend URL: `https://fitverse-ui.vercel.app/`
 
 ## Testing
@@ -158,14 +142,10 @@ The frontend is in a separate repository. If you have access:
    - Click "Predict", enter values (e.g., Weight: 78, Height: 1.76, Age: 32, BMI: 23, Gender: Male), and click "Predict BMI Case".
    - Verify the result (e.g., "Your predicted BMI case is: normal").
 
-2. **Retrain Modal**:
+2. **Retrain Model**:
    - Click "Retrain", upload a `.csv` file with columns `Weight`, `Height`, `BMI`, `Age`, `BMIcase`, `Gender`.
    - Click "Retrain Model".
    - Verify the result shows the message, metrics (Test Loss, Accuracy, Precision, Recall, F1 Score, ROC AUC), and visualizations (Confusion Matrix, Loss Plot).
-
-3. **CORS**:
-   - Open the browser’s Network tab (F12) and confirm requests to `https://fitverse-q8be.onrender.com/` succeed with `Access-Control-Allow-Origin: *`.
-
 
 ## Author
 Geofrey Tumwesigye
