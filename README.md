@@ -1,126 +1,171 @@
-```markdown
-# FitVerse BMI Classifier
+# FitVerse - BMI Case Classifier
 
-FitVerse is a machine learning application that classifies Body Mass Index (BMI) cases based on user input, using a pre-trained model. The app also allows for model retraining with new data.
+## Project Description
+FitVerse is a health monitoring web application that uses machine learning to predict BMI cases and provide personalized health insights. Users can input their weight, height, age, BMI, and gender to get a predicted BMI case (e.g., normal, overweight). Additionally, FitVerse allows users to retrain the underlying model with new datasets, displaying detailed performance metrics (Test Loss, Accuracy, Precision, Recall, F1 Score, ROC AUC) and visualizations (Confusion Matrix, Training vs Validation Loss).
+
+The project consists of a **FastAPI backend** (hosted on Render) for handling predictions and model retraining, and a **React frontend** (deployed on Vercel) for a user-friendly interface. The backend leverages TensorFlow for machine learning, scikit-learn for metrics, and Matplotlib/Seaborn for visualizations. The frontend and backend are maintained in separate repositories.
+
+## Live Demo and Links
+- **FitVerse UI**: [https://fitverse-ui.vercel.app/](https://fitverse-ui.vercel.app/)
+- **Video Demo**: [A video Demo - YouTube Link] 
+- **GitHub Repository**: [FitVerse GitHub Repo](https://github.com/g-tumwesigye/FitVerse)
+
+## Dataset
+The dataset used was sourced from Kaggle:
+- **Dataset Source**: [Fitness Exercises using BFP and BMI](https://www.kaggle.com/datasets/mustafa20635/fitness-exercises-using-bfp-and-bmi)
 
 ## Features
+- **BMI Case Prediction**: Predict your BMI case by entering weight, height, age, BMI, and gender.
+- **Model Retraining**: Upload a new dataset (CSV) to retrain the model and view performance metrics and visualizations.
+- **Responsive UI**: A clean and intuitive interface built with React, featuring modals for prediction and retraining.
+- **Cross-Origin Support**: The backend includes CORS middleware for seamless frontend-backend communication.
 
-- **BMI Classification**: Predict the BMI case (e.g., underweight, normal weight, overweight, etc.) based on user input.
-- **Model Retraining**: Retrain the model using new data uploaded through the `/retrain` endpoint.
-- **FastAPI Backend**: The application is built with FastAPI for fast, asynchronous handling of requests.
+## Tech Stack
+- **Frontend**: React, JavaScript, CSS (in a separate repository)
+- **Backend**: FastAPI, Python, TensorFlow, scikit-learn, Matplotlib, Seaborn
+- **Deployment**:
+  - Frontend: Vercel
+  - Backend: Render
+- **API Endpoints**:
+  - `/predict`: For BMI case prediction
+  - `/retrain`: For retraining the model with a new dataset
 
-## Requirements
+## Project Structure
+This repository contains the backend and related files. The frontend is maintained in a separate repository.
 
-The project requires the following dependencies:
+```
+FitVerse/
+├── README.md              
+├── data/                  
+│   ├── test/              
+│   │   ├── X_test.csv    
+│   │   └── y_test.csv     
+│   └── train/             
+│       ├── X_train.csv    
+│       └── y_train.csv    
+├── main.py                
+├── models/                
+│   ├── label_encoders.pkl 
+│   ├── scaler.pkl         
+│   └── sgd_momentum_model.h5 
+├── notebook/             
+│   └── FitVerse.ipynb     
+├── requirements.txt       
+└── src/                   
+    ├── model.py           
+    ├── prediction.py      
+    ├── preprocessing.py   
+    └── retrain.py         
+```
 
-- Python 3.8+
-- TensorFlow 2.x
-- FastAPI
-- Uvicorn
-- Pandas
-- Numpy
-- Joblib
+## Setup Instructions
 
-## Installation
+### Prerequisites
+- **Python 3.8+** (for backend)
+- **Node.js 14+** (for frontend, if setting up the frontend locally)
+- **Git**
 
-1. Clone this repository to your local machine:
+### Step 1: Clone the Backend Repository
+Clone the FitVerse backend repository from GitHub:
+```bash
+git clone https://github.com/g-tumwesigye/FitVerse.git
+cd FitVerse
+```
 
+### Step 2: Set Up the Backend
+1. **Create a Virtual Environment**:
    ```bash
-   git clone https://github.com/your-username/FitVerse.git
-   cd FitVerse
+   python -m venv venv
+   source venv/bin/activate  # On Windows: venv\Scripts\activate
    ```
-Create a virtual environment 
 
-   ```bash
-   python3 -m venv venv
-   source venv/bin/activate  # On Windows use `venv\Scripts\activate`
-   ```
-Install the required dependencies:
-
+2. **Install Dependencies**:
    ```bash
    pip install -r requirements.txt
    ```
 
-   Make sure you have `requirements.txt` in your project with all necessary dependencies listed.
-
-## Model Files
-
-The model files (`scaler.pkl`, `label_encoders.pkl`, and `sgd_momentum_model.h5`) are required to make predictions. These files should be stored in the `models/` directory in your project.
-
-- **scaler.pkl**: The fitted scaler for feature normalization.
-- **label_encoders.pkl**: The fitted label encoders for encoding categorical variables.
-- **sgd_momentum_model.h5**: The pre-trained Keras model.
-
-## Running the Application
-
-To run the FastAPI application locally:
-
-1. Start the FastAPI server with Uvicorn:
-
+3. **Run the Backend Locally**:
    ```bash
-   uvicorn main:app --reload
+   uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+   ```
+   The backend will be available at `http://localhost:8000`.
+
+### Step 3: Set Up the Frontend
+1. **Clone the Frontend Repository**:
+   ```bash
+   git clone <your-frontend-repo-url>
+   cd <frontend-repo-name>
    ```
 
-2. The server will run on `http://127.0.0.1:8000`. You can access the interactive API documentation at:
-
+2. **Install Dependencies**:
+   ```bash
+   npm install
    ```
-   http://127.0.0.1:8000/docs
+
+3. **Run the Frontend Locally**:
+   ```bash
+   npm start
+   ```
+   The frontend will be available at `http://localhost:3000`.
+
+### Step 4: Test Locally
+- **Backend**: Test the backend endpoints using a tool like Postman:
+  - POST `http://localhost:8000/predict` with a JSON body like:
+    ```json
+    {"Weight": 78, "Height": 1.76, "BMI": 23, "Age": 32, "Gender": "Male"}
+    ```
+  - POST `http://localhost:8000/retrain` by uploading a `.csv` file.
+- **Frontend**: If running locally, open `http://localhost:3000` in your browser, click "Predict" to test the BMI prediction modal, and "Retrain" to test the retraining feature with a `.csv` file.
+
+## Deployment
+
+### Backend Deployment (Render)
+1. **Push Changes to Git**:
+   - Commit and push your backend code to your Git repository.
+   ```bash
+   git add .
+   git commit -m "Updated backend with CORS and metrics"
+   git push origin main
    ```
 
-   This allows you to interact with the `predict` and `retrain` endpoints.
+2. **Deploy on Render**:
+   - Log in to Render (https://dashboard.render.com/).
+   - Select your backend service (`fitverse-q8be`).
+   - Ensure the build command is `pip install -r requirements.txt` and the start command is `uvicorn main:app --host 0.0.0.0 --port $PORT`.
+   - Trigger a redeployment if needed.
+   - Backend URL: `https://fitverse-q8be.onrender.com/`
 
-## API Endpoints
+### Frontend Deployment (Vercel)
+The frontend is in a separate repository. If you have access:
+1. **Push Changes to Git**:
+   - Commit and push your frontend code to its Git repository.
+   ```bash
+   cd <frontend-repo-directory>
+   git add .
+   git commit -m "Updated Hero.jsx and hero.css"
+   git push origin main
+   ```
 
-### 1. **Predict BMI Case**
+2. **Deploy on Vercel**:
+   - Log in to Vercel (https://vercel.com/).
+   - Select your frontend project.
+   - Vercel will automatically redeploy on detecting the new commit.
+   - Frontend URL: `https://fitverse-ui.vercel.app/`
 
-- **Endpoint**: `/predict`
-- **Method**: POST
-- **Request Body**: JSON object containing the following fields:
-  
-  ```json
-  {
-    "Weight": float,
-    "Height": float,
-    "BMI": float,
-    "Age": float,
-    "Gender": "Male" or "Female"
-  }
-  ```
+## Testing
+1. **Predict Modal**:
+   - Open the frontend (`https://fitverse-ui.vercel.app/`).
+   - Click "Predict", enter values (e.g., Weight: 78, Height: 1.76, Age: 32, BMI: 23, Gender: Male), and click "Predict BMI Case".
+   - Verify the result (e.g., "Your predicted BMI case is: normal").
 
-- **Response**:
+2. **Retrain Modal**:
+   - Click "Retrain", upload a `.csv` file with columns `Weight`, `Height`, `BMI`, `Age`, `BMIcase`, `Gender`.
+   - Click "Retrain Model".
+   - Verify the result shows the message, metrics (Test Loss, Accuracy, Precision, Recall, F1 Score, ROC AUC), and visualizations (Confusion Matrix, Loss Plot).
 
-  ```json
-  {
-    "predicted_bmi_case": "BMI classification (e.g., 'Normal', 'Overweight', etc.)"
-  }
-  ```
-
-### 2. **Retrain Model**
-
-- **Endpoint**: `/retrain`
-- **Method**: POST
-- **Request Body**: CSV file containing the following columns:
-
-  - `Weight`: User's weight in kg.
-  - `Height`: User's height in cm.
-  - `BMI`: User's BMI value.
-  - `Age`: User's age in years.
-  - `Gender`: User's gender ("Male" or "Female").
-  - `BMIcase`: The classification of the BMI (e.g., "Underweight", "Normal weight", "Overweight", etc.).
-
-- **Response**:
-
-  ```json
-  {
-    "message": "Model retrained successfully"
-  }
-  ```
-
-## Troubleshooting
-
-- Ensure that the model files (`scaler.pkl`, `label_encoders.pkl`, and `sgd_momentum_model.h5`) are placed in the `models/` directory.
-- If you encounter issues with the model's shape or prediction errors, check the input data format and ensure that features like BMI, height, weight, and gender are correctly scaled and encoded.
+3. **CORS**:
+   - Open the browser’s Network tab (F12) and confirm requests to `https://fitverse-q8be.onrender.com/` succeed with `Access-Control-Allow-Origin: *`.
 
 
-
-
+## Author
+Geofrey Tumwesigye
