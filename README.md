@@ -7,7 +7,7 @@ The project consists of a **FastAPI backend** (hosted on Render) for handling pr
 
 ## Links
 - **FitVerse UI**: [https://fitverse-ui.vercel.app/](https://fitverse-ui.vercel.app/)
-- **Video Demo**: [https://youtu.be/FeWSHbhIyLE]
+- **Video Demo**: [FitVerse_Video_Demo](https://youtu.be/FeWSHbhIyLE)
 - **Backend GitHub Repository**: [FitVerse GitHub Repo](https://github.com/g-tumwesigye/FitVerse)
 - **Frontend GitHub Repository**: [FitVerse_UI GitHub Repo](https://github.com/g-tumwesigye/Fitverse_UI)
 
