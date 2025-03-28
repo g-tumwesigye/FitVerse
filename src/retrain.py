@@ -15,7 +15,7 @@ def retrain_model(file):
         # Read uploaded CSV
         new_data = pd.read_csv(file)
         
-        # Preprocess new data (same as in preprocessing.py)
+        # Preprocessing new data 
         new_data.drop(columns=["Body Fat Percentage", "BFPcase", "Exercise Recommendation Plan"], inplace=True)
         new_data["BMI_to_Weight"] = new_data["BMI"] / new_data["Weight"]
         numerical_features = ["Weight", "Height", "BMI", "Age", "BMI_to_Weight"]
