@@ -6,7 +6,7 @@ FitVerse is a health monitoring web application that uses machine learning to pr
 The project consists of a **FastAPI backend** (hosted on Render) for handling predictions and model retraining, and a **React frontend** (deployed on Vercel) for a user-friendly interface. The backend leverages TensorFlow for machine learning, scikit-learn for metrics, and Matplotlib/Seaborn for visualizations. The frontend and backend are maintained in separate repositories.
 
 ## Links
-- **FitVerse UI**: [https://fitverse-ui.vercel.app/](https://fitverse-ui.vercel.app/)
+- **FitVerse UI**: [FitVerse_Frontend](https://fitverse-ui.vercel.app/)
 - **Video Demo**: [FitVerse_Video_Demo](https://youtu.be/FeWSHbhIyLE)
 - **Backend GitHub Repository**: [FitVerse GitHub Repo](https://github.com/g-tumwesigye/FitVerse)
 - **Frontend GitHub Repository**: [FitVerse_UI GitHub Repo](https://github.com/g-tumwesigye/Fitverse_UI)
